@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Student Progress Tracker v5</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#182230;--muted:#667085;--accent:#3457d5;--line:#e1e7f0;--green:#16845b;--orange:#9a5600;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.48}
+header{background:linear-gradient(135deg,#243eaa,#5575ed);color:white;padding:23px 15px 27px}header .wrap,main{max-width:1100px;margin:auto}h1{font-size:clamp(1.45rem,4vw,2.15rem);margin:0 0 5px}header p{margin:0;opacity:.93}main{padding:15px 12px 42px}
+.notice{padding:12px 14px;border:1px solid #c7d7fe;background:#eef4ff;color:#263b80;border-radius:12px;margin-bottom:14px;font-size:.9rem}
+nav{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px;position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:5}
+nav button{background:#fff;color:#344054;border:1px solid var(--line);border-radius:999px;padding:10px 13px;font:inherit;font-weight:700;cursor:pointer}
+nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 4px 16px #14234b08;min-width:0}.wide{grid-column:1/-1}h2{font-size:1.08rem;margin:0 0 12px}h3{font-size:1rem;margin:0 0 8px}
+label{display:block;font-weight:700;font-size:.9rem;margin:10px 0 5px}input,select,textarea{font:inherit;width:100%;border:1px solid #cbd3e1;border-radius:10px;padding:10px 11px;background:#fff;color:var(--ink);min-width:0}input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent)}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.btn{border:0;border-radius:10px;background:var(--accent);color:white;font:inherit;font-weight:750;padding:11px 14px;min-height:42px;cursor:pointer}.btn.secondary{background:#e9edff;color:#263b80}.btn.danger{background:#fff0f0;color:#a52222}.btn.ghost{background:#f1f3f8;color:#344054}.btn.small{font-size:.83rem;padding:7px 9px;min-height:34px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.muted{font-size:.88rem;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.stat{border:1px solid var(--line);background:#f8f9fc;border-radius:12px;padding:11px}.stat strong{font-size:1.35rem;display:block}.stat span{font-size:.78rem;color:var(--muted)}.bar{height:10px;border-radius:99px;background:#e9edf5;overflow:hidden}.bar span{height:100%;display:block;background:linear-gradient(90deg,#3457d5,#6f8aff);width:0}
+.subject-list{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}.chip{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:5px 7px 5px 10px;background:#fff;font-size:.85rem}.chip button{border:0;border-radius:50%;background:#f1f3f8;min-width:26px;min-height:26px}
+.item{border-bottom:1px solid var(--line);padding:12px 0;display:flex;gap:10px;align-items:flex-start}.item:last-child{border-bottom:0}.grow{flex:1;min-width:0}.item-title{font-weight:750;overflow-wrap:anywhere}.meta{font-size:.82rem;color:var(--muted);margin-top:3px}.pill{display:inline-block;border-radius:7px;padding:3px 7px;font-size:.76rem;margin:4px 4px 0 0;background:#eef2ff;color:#3548a5}.pill.done{background:#e6f7ef;color:#087443}.pill.warn{background:#fff1db;color:#8a4b08}.pill.late{background:#ffeded;color:#a52222}.empty{border:1px dashed #cbd3e1;background:#fafbff;border-radius:12px;padding:14px;text-align:center;color:var(--muted)}.chapter{border:1px solid var(--line);border-radius:12px;margin:10px 0;padding:12px}.chapter-head{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}.chapter-name{font-weight:800}.mini-bar{height:7px;background:#e9edf5;border-radius:99px;overflow:hidden;margin:8px 0}.mini-bar span{display:block;height:100%;background:#3c61db}.task-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:155px;max-width:42%}.task-controls select,.task-controls input{padding:7px;font-size:.82rem}.alert{border:1px solid #f1c27d;background:#fff8e8;border-radius:12px;padding:12px;margin:10px 0}.success{border:1px solid #a6e3c4;background:#edfff5;border-radius:12px;padding:12px;margin:10px 0}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f8f9fc}.footer{font-size:.8rem;color:var(--muted);margin-top:17px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.fields{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:13px}.task-controls{width:120px}.task-controls select,.task-controls input{font-size:.77rem;padding:6px}nav{gap:5px}nav button{font-size:.83rem;padding:9px 10px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>🎯 Student Progress Tracker v5</h1><p>Plan • Study • Revise • Track your progress</p></div></header>
+<main>
+<div class="notice"><strong>v5 local demo:</strong> v4 से अपग्रेड: विषय/चैप्टर खोज, अधिक संतुलित timetable और दोहराए जा रहे topics से बचाव। डेटा इसी ब्राउज़र में सेव होता है; reminders ऐप खोलने पर दिखते हैं। Login/cloud sync अभी नहीं है।</div>
+<nav aria-label="मुख्य मेनू">
+<button class="active" data-tab="dashboard">डैशबोर्ड</button><button data-tab="syllabus">सिलेबस</button><button data-tab="timetable">टाइमटेबल</button><button data-tab="tasks">Tasks</button><button data-tab="backup">Backup</button>
+</nav>
+<section id="dashboard" class="panel active">
+<div id="reminders"></div>
+<div class="grid">
+<div class="card wide"><h2>तुम्हारा लक्ष्य</h2><form id="profileForm"><div class="fields">
+<div><label for="goal">परीक्षा / लक्ष्य</label><input id="goal" required maxlength="100" placeholder="जैसे: JEE Main / Class 10"></div>
+<div><label for="examDate">परीक्षा की तारीख</label><input id="examDate" type="date" required></div>
+<div><label for="hours">रोज़ पढ़ाई के घंटे</label><input id="hours" type="number" min=".5" max="16" step=".5" value="4" required></div>
+<div><label for="blockMins">एक study block (मिनट)</label><select id="blockMins"><option value="25">25 मिनट</option><option value="40" selected>40 मिनट</option><option value="50">50 मिनट</option><option value="60">60 मिनट</option></select></div>
+</div><label>विषय</label><div id="subjectList" class="subject-list"></div><div class="fields"><div><label for="newSubject">नया विषय</label><input id="newSubject" maxlength="60" placeholder="जैसे: Economics"></div><div style="display:flex;align-items:end"><button type="button" class="btn secondary" id="addSubject">+ विषय जोड़ें</button></div></div><div class="actions"><button class="btn">लक्ष्य सेव करें</button></div></form></div>
+<div class="card wide"><h2>Progress Dashboard</h2><p id="welcome" class="muted">पहले लक्ष्य सेव करो।</p><div class="stats">
+<div class="stat"><strong id="totalTopics">0</strong><span>कुल topics</span></div><div class="stat"><strong id="completedTopics">0</strong><span>पूरे topics</span></div><div class="stat"><strong id="weakTopics">0</strong><span>Revision/कमज़ोर</span></div><div class="stat"><strong id="daysLeft">—</strong><span>परीक्षा तक दिन</span></div></div>
+<label>सिलेबस पूरा: <span id="progressText">0%</span></label><div class="bar"><span id="progressBar"></span></div><p id="nextTip" class="muted"></p></div>
+<div class="card wide"><h2>आज और आने वाले काम</h2><div id="dashboardTasks"></div></div>
+</div></section>
+<section id="syllabus" class="panel"><div class="grid">
+<div class="card"><h2>Chapter और Topic जोड़ें</h2><form id="topicForm">
+<label for="topicSubject">विषय</label><select id="topicSubject" required></select><label for="chapterName">Chapter</label><input id="chapterName" required maxlength="100" placeholder="जैसे: Motion"><label for="topicName">Topic</label><input id="topicName" required maxlength="120" placeholder="जैसे: Displacement"><div class="fields"><div><label for="topicStatus">स्थिति</label><select id="topicStatus"><option value="not">शुरू नहीं</option><option value="progress">चल रहा है</option><option value="done">पूरा</option><option value="weak">कमज़ोर / रिविज़न</option></select></div><div><label for="topicDuration">समय (मिनट)</label><input id="topicDuration" type="number" min="10" max="600" step="5" value="40"></div></div><div class="actions"><button class="btn">+ Topic सेव करें</button></div></form><p class="muted">एक chapter में कई topics जोड़ सकते हो।</p></div>
+<div class="card"><h2>Chapter-wise Progress</h2><p class="muted">कम progress वाले chapters और weak/revision topics पर ध्यान दो।</p><div id="chapterAnalytics"></div></div>
+<div class="card wide"><h2>Topic सूची</h2><div class="fields"><div><label for="filterSubject">विषय</label><select id="filterSubject"><option value="all">सभी विषय</option></select></div><div><label for="filterStatus">स्थिति</label><select id="filterStatus"><option value="all">सभी स्थितियाँ</option><option value="not">शुरू नहीं</option><option value="progress">चल रहा है</option><option value="done">पूरा</option><option value="weak">कमज़ोर / रिविज़न</option></select></div></div><label for="topicSearch">Topic / Chapter खोजें</label><input id="topicSearch" type="search" maxlength="120" placeholder="जैसे: Motion, Integration, Equilibrium"><div id="topicList"></div></div>
+</div></section>
+<section id="timetable" class="panel"><div class="grid">
+<div class="card wide"><h2>कई दिनों का Study Timetable</h2><p class="muted">बाकी topics, परीक्षा की तारीख, रोज़ के घंटे और study block के आधार पर प्लान बनेगा। यह नियम-आधारित अनुमान है; यह नींद, स्कूल या coaching schedule को अपने-आप नहीं जानता।</p>
+<div class="fields"><div><label for="planStart">प्लान शुरू होने की तारीख</label><input type="date" id="planStart"></div><div><label for="planDays">कितने दिन का प्लान?</label><select id="planDays"><option value="3">3 दिन</option><option value="7" selected>7 दिन</option><option value="14">14 दिन</option><option value="30">30 दिन</option></select></div></div><div class="actions"><button class="btn" id="generateTimetable" type="button">Timetable बनाओ</button><button class="btn secondary" id="rebuildTimetable" type="button">बाकी topics से अपडेट करो</button></div><div id="timetableOutput" style="margin-top:12px"></div></div>
+</div></section>
+<section id="tasks" class="panel"><div class="grid">
+<div class="card"><h2>अपना Task जोड़ें</h2><form id="taskForm"><label for="taskTitle">Task</label><input id="taskTitle" required maxlength="140" placeholder="जैसे: 15 सवाल हल करो"><label for="taskSubject">विषय</label><select id="taskSubject"></select><div class="fields"><div><label for="taskDate">तारीख</label><input id="taskDate" type="date" required></div><div><label for="taskMinutes">समय (मिनट)</label><input id="taskMinutes" type="number" min="5" max="600" step="5" value="30" required></div></div><div class="actions"><button class="btn">Task जोड़ें</button></div></form></div>
+<div class="card"><h2>Task निर्देश</h2><p class="muted">Task पूरा करने के लिए checkbox दबाओ। तारीख या समय बदलने के लिए task के controls इस्तेमाल करो। पुराने अधूरे tasks को एक क्लिक से अगले दिन भेज सकते हो।</p><button id="rescheduleOverdue" class="btn secondary" type="button">सभी पुराने अधूरे tasks कल पर भेजो</button></div>
+<div class="card wide"><h2>Task सूची</h2><div class="fields"><div><label for="taskFilter">दिखाएँ</label><select id="taskFilter"><option value="all">सभी tasks</option><option value="open">अधूरे</option><option value="done">पूरे</option><option value="overdue">तारीख निकल गई</option></select></div><div><label for="taskSort">क्रम</label><select id="taskSort"><option value="date">तारीख के अनुसार</option><option value="subject">विषय के अनुसार</option></select></div></div><div id="taskList"></div></div>
+</div></section>
+<section id="backup" class="panel"><div class="grid">
+<div class="card"><h2>Backup Export</h2><p>अपना profile, subjects, syllabus topics, timetable और tasks JSON फ़ाइल में डाउनलोड करो। फ़ाइल को सुरक्षित जगह रखो।</p><button id="exportBtn" class="btn">Backup डाउनलोड करें</button><p id="exportMsg" class="muted"></p></div>
+<div class="card"><h2>Backup Import / Restore</h2><p>पहले export की गई JSON फ़ाइल चुनो। Import करने पर मौजूदा डेटा बदल जाएगा; पहले backup बना लेना बेहतर है।</p><label for="importFile">JSON backup फ़ाइल</label><input id="importFile" type="file" accept=".json,application/json"><div class="actions"><button id="importBtn" class="btn secondary">Backup Restore करें</button></div></div>
+<div class="card wide"><h2>डेटा और सुरक्षा</h2><ul><li>यह demo browser के localStorage में data रखता है—यह encrypted account या cloud backup नहीं है।</li><li>Export की गई JSON फ़ाइल में तुम्हारे study details हो सकते हैं; उसे सार्वजनिक जगह पर share न करो।</li><li>Cloud sync और सुरक्षित login अगले technical चरण में backend/database के साथ बनेंगे।</li></ul><div class="actions"><button id="resetBtn" class="btn danger">पूरा Demo Reset करें</button></div></div>
+</div></section>
+<p class="footer">Student Progress Tracker v5 · मोबाइल-अनुकूल local prototype v5 · परीक्षा या syllabus के बारे में दिए गए परिणाम उपयोगकर्ता की जानकारी पर आधारित हैं।</p>
+</main>
+<script>
+(()=> {
+const KEY='spt_v4_data'; // v5 पुराने v4 डेटा को भी पढ़ता है
+const $=id=>document.getElementById(id);
+const fresh=()=>({version:5,profile:{goal:'',examDate:'',hours:4,block:40,subjects:['Physics','Chemistry','Mathematics']},topics:[],tasks:[],timetable:[],timetableStart:'',timetableDays:7,revisionLog:[]});
+let state=fresh();
+const statusNames={not:'शुरू नहीं',progress:'चल रहा है',done:'पूरा',weak:'कमज़ोर / रिविज़न'};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dateStr=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const today=()=>dateStr(new Date());
+const plusDays=(str,n)=>{const d=new Date((str||today())+'T12:00:00');d.setDate(d.getDate()+n);return dateStr(d);};
+const dayDiff=(a,b)=>Math.round((new Date(a+'T12:00:00')-new Date(b+'T12:00:00'))/86400000);
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){alert('Browser में डेटा सेव नहीं हो पाया। Storage उपलब्ध है या नहीं, जाँचें।');}}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){const x=JSON.parse(raw);if(x&&x.profile&&Array.isArray(x.topics)&&Array.isArray(x.tasks)){state={...fresh(),...x,profile:{...fresh().profile,...x.profile}};}}}catch(e){alert('Saved data पढ़ने में समस्या आई। Backup file हो तो उससे restore कर सकते हो।');}}
+function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function renderSubjectLists(){
+ const box=$('subjectList');box.innerHTML='';
+ state.profile.subjects.forEach(s=>{const chip=document.createElement('span');chip.className='chip';chip.append(document.createTextNode(s));const b=document.createElement('button');b.type='button';b.textContent='×';b.setAttribute('aria-label',s+' हटाएँ');b.addEventListener('click',()=>{if(state.topics.some(t=>t.subject===s)||state.tasks.some(t=>t.subject===s)){alert('इस विषय में topics/tasks हैं। पहले उन्हें हटाएँ या विषय न हटाएँ।');return;}if(state.profile.subjects.length<2){alert('कम-से-कम एक विषय रखें।');return;}state.profile.subjects=state.profile.subjects.filter(x=>x!==s);save();render();});chip.append(b);box.append(chip);});
+ ['topicSubject','taskSubject','filterSubject'].forEach(id=>{const el=$(id),old=el.value;el.innerHTML='';if(id==='filterSubject')el.add(new Option('सभी विषय','all'));state.profile.subjects.forEach(s=>el.add(new Option(s,s)));if(id==='filterSubject'&&!state.profile.subjects.includes(old))el.value='all';else if(state.profile.subjects.includes(old))el.value=old;});
+}
+function renderDashboard(){
+ const t=state.topics,done=t.filter(x=>x.status==='done').length,weak=t.filter(x=>x.status==='weak').length;
+ $('totalTopics').textContent=t.length;$('completedTopics').textContent=done;$('weakTopics').textContent=weak;
+ const p=state.profile;let days='—';if(p.examDate){const d=dayDiff(p.examDate,today());days=d<0?'बीती':d;}$('daysLeft').textContent=days;
+ const pct=t.length?Math.round(done/t.length*100):0;$('progressText').textContent=pct+'%';$('progressBar').style.width=pct+'%';
+ $('welcome').textContent=p.goal?`लक्ष्य: ${p.goal} · रोज़ ${p.hours} घंटे · विषय: ${p.subjects.join(', ')}`:'पहले लक्ष्य सेव करें।';
+ const first=t.find(x=>x.status==='weak')||t.find(x=>x.status!=='done');$('nextTip').textContent=first?`सुझाव: ${first.subject} → ${first.chapter} → ${first.title} पर ध्यान दो।`:'अभी कोई अधूरा topic नहीं है।';
+ t.forEach(x=>{if(x.nextRevision&&x.nextRevision<=today()&&x.status==='done'){x.status='weak';}});
+ const due=t.filter(x=>x.nextRevision&&x.nextRevision<=today()&&x.status==='weak');const overdue=state.tasks.filter(x=>!x.done&&x.date<today());
+ if(due.length)save();
+ const rem=$('reminders');rem.innerHTML='';if(due.length||overdue.length){const d=document.createElement('div');d.className='alert';d.innerHTML=`<strong>🔔 तुम्हारे reminders</strong><div>${due.length?`${due.length} topic(s) की revision due है।`:''} ${overdue.length?`${overdue.length} अधूरे task(s) की तारीख निकल गई है।`:''}</div><div class="actions"><button class="btn small" id="goRev">Revision topics देखो</button><button class="btn small secondary" id="goTasks">Tasks देखो</button></div>`;rem.append(d);$('goRev').addEventListener('click',()=>{showTab('syllabus');$('filterStatus').value='weak';renderTopics();});$('goTasks').addEventListener('click',()=>{showTab('tasks');$('taskFilter').value='overdue';renderTasks();});}
+ const list=$('dashboardTasks');const upcoming=state.tasks.filter(x=>!x.done).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);list.innerHTML='';
+ if(!upcoming.length){list.innerHTML='<div class="empty">अभी कोई अधूरा task नहीं। Timetable बनाओ या task जोड़ो।</div>';}else upcoming.forEach(t=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<div class="grow"><div class="item-title">${esc(t.title)}</div><div class="meta">${esc(t.subject)} · ${t.minutes} मिनट · ${t.date}</div></div><span class="pill ${t.date<today()?'late':''}">${t.date<today()?'Overdue':t.date===today()?'आज':'आने वाला'}</span>`;list.append(d);});
+}
+function renderTopics(){
+ const fs=$('filterSubject').value,st=$('filterStatus').value,q=($('topicSearch')?.value||'').trim().toLowerCase(),box=$('topicList');box.innerHTML='';
+ const list=state.topics.filter(t=>(fs==='all'||t.subject===fs)&&(st==='all'||t.status===st)&&(!q||[t.title,t.chapter,t.subject].some(v=>String(v||'').toLowerCase().includes(q))));
+ if(!list.length){box.innerHTML='<div class="empty">कोई topic नहीं मिला। नया chapter/topic जोड़ें।</div>';return;}
+ list.forEach(t=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<div class="grow"><div class="item-title">${esc(t.title)}</div><div class="meta">${esc(t.subject)} · ${esc(t.chapter)} · ${t.minutes} मिनट</div><span class="pill ${t.status==='done'?'done':t.status==='weak'?'warn':''}">${statusNames[t.status]}</span>${t.nextRevision?`<span class="pill">Revision: ${t.nextRevision}</span>`:''}</div><div class="task-controls"><select aria-label="स्थिति">${Object.entries(statusNames).map(([k,v])=>`<option value="${k}" ${t.status===k?'selected':''}>${v}</option>`).join('')}</select><button type="button" class="btn small secondary rev">Revision +7 दिन</button><button type="button" class="btn small danger del">हटाएँ</button></div>`;
+ d.querySelector('select').addEventListener('change',e=>{const prev=t.status;t.status=e.target.value;if(t.status==='done'&&prev!=='done'){t.completedAt=today();t.nextRevision=plusDays(today(),1);t.revisionCount=0;state.revisionLog.push({topicId:t.id,date:today(),kind:'completed'});}save();render();});
+ d.querySelector('.rev').addEventListener('click',()=>{t.status='weak';t.nextRevision=plusDays(today(),7);state.revisionLog.push({topicId:t.id,date:today(),kind:'revision-scheduled'});save();render();});
+ d.querySelector('.del').addEventListener('click',()=>{if(confirm('यह topic और इससे जुड़े timetable tasks हटाएँ?')){state.topics=state.topics.filter(x=>x.id!==t.id);state.timetable=state.timetable.filter(x=>x.topicId!==t.id);save();render();}});
+ box.append(d);});
+}
+function renderAnalytics(){
+ const box=$('chapterAnalytics');box.innerHTML='';if(!state.topics.length){box.innerHTML='<div class="empty">Progress देखने के लिए topics जोड़ें।</div>';return;}
+ const map=new Map();state.topics.forEach(t=>{const key=t.subject+'||'+t.chapter;if(!map.has(key))map.set(key,{subject:t.subject,chapter:t.chapter,total:0,done:0,weak:0});const a=map.get(key);a.total++;if(t.status==='done')a.done++;if(t.status==='weak')a.weak++;});
+ [...map.values()].sort((a,b)=>(a.done/a.total)-(b.done/b.total)).forEach(a=>{const pct=Math.round(a.done/a.total*100);const d=document.createElement('div');d.className='chapter';d.innerHTML=`<div class="chapter-head"><div><div class="chapter-name">${esc(a.chapter)}</div><div class="meta">${esc(a.subject)} · ${a.done}/${a.total} topics पूरे · ${a.weak} weak/revision</div></div><strong>${pct}%</strong></div><div class="mini-bar"><span style="width:${pct}%"></span></div>${a.weak||pct<50?'<span class="pill warn">ध्यान देने की ज़रूरत</span>':''}`;box.append(d);});
+}
+function renderTasks(){
+ const box=$('taskList');box.innerHTML='';const f=$('taskFilter').value,sort=$('taskSort').value;
+ let arr=state.tasks.filter(t=>f==='all'||(f==='open'&&!t.done)||(f==='done'&&t.done)||(f==='overdue'&&!t.done&&t.date<today()));
+ arr.sort((a,b)=>sort==='date'?(a.date||'').localeCompare(b.date||''):a.subject.localeCompare(b.subject));
+ if(!arr.length){box.innerHTML='<div class="empty">इस फ़िल्टर में कोई task नहीं।</div>';return;}
+ arr.forEach(t=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<input type="checkbox" aria-label="Task पूरा" ${t.done?'checked':''}><div class="grow"><div class="item-title">${esc(t.title)}</div><div class="meta">${esc(t.subject)} · ${t.minutes} मिनट</div></div><div class="task-controls"><label style="margin:0;font-size:.75rem">तारीख<input type="date" value="${esc(t.date)}" aria-label="Task तारीख"></label><label style="margin:0;font-size:.75rem">मिनट<input type="number" min="5" max="600" step="5" value="${Number(t.minutes)}" aria-label="Task समय"></label><button class="btn small secondary move">कल पर भेजो</button><button class="btn small danger del">हटाएँ</button></div>`;
+ d.querySelector('input[type=checkbox]').addEventListener('change',e=>{t.done=e.target.checked;if(t.done&&t.topicId){const topic=state.topics.find(x=>x.id===t.topicId);if(topic&&topic.status!=='done')topic.status='progress';}save();render();});
+ const inputs=d.querySelectorAll('input[type=date],input[type=number]');inputs[0].addEventListener('change',e=>{if(e.target.value){t.date=e.target.value;save();render();}});inputs[1].addEventListener('change',e=>{const n=Number(e.target.value);if(n>=5&&n<=600){t.minutes=n;save();render();}});
+ d.querySelector('.move').addEventListener('click',()=>{t.date=plusDays(today(),1);save();render();});d.querySelector('.del').addEventListener('click',()=>{if(confirm('यह task हटाएँ?')){state.tasks=state.tasks.filter(x=>x.id!==t.id);save();render();}});box.append(d);});
+}
+function renderTimetable(){
+ const box=$('timetableOutput');box.innerHTML='';if(!state.timetable.length){box.innerHTML='<div class="empty">अभी timetable नहीं बना। ऊपर से तारीख और अवधि चुनकर बनाओ।</div>';return;}
+ const grouped=new Map();state.timetable.forEach(t=>{if(!grouped.has(t.date))grouped.set(t.date,[]);grouped.get(t.date).push(t);});
+ for(const [date,tasks] of grouped){const d=document.createElement('div');d.className='chapter';const mins=tasks.reduce((a,t)=>a+t.minutes,0);d.innerHTML=`<div class="chapter-head"><div><div class="chapter-name">${date===today()?'आज · ':''}${date}</div><div class="meta">${tasks.length} tasks · ${mins} मिनट</div></div><button class="btn small secondary moveDay">अधूरे tasks अगले दिन</button></div><div class="daytasks"></div>`;d.querySelector('.moveDay').addEventListener('click',()=>{tasks.filter(t=>!t.done).forEach(t=>t.date=plusDays(t.date,1));save();render();});const list=d.querySelector('.daytasks');tasks.forEach(t=>{const el=document.createElement('div');el.className='item';el.innerHTML=`<input type="checkbox" ${t.done?'checked':''} aria-label="Timetable task पूरा"><div class="grow"><div class="item-title">${esc(t.title)}</div><div class="meta">${esc(t.subject)} · ${t.minutes} मिनट</div></div>`;el.querySelector('input').addEventListener('change',e=>{t.done=e.target.checked;const topic=state.topics.find(x=>x.id===t.topicId);if(topic&&t.done&&topic.status!=='done')topic.status='progress';const existing=state.tasks.find(x=>x.id===t.id);if(existing)existing.done=t.done;save();render();});list.append(el);});box.append(d);}
+}
+function generateTimetable(){
+ if(!state.profile.goal||!state.profile.examDate){alert('पहले लक्ष्य और परीक्षा की तारीख सेव करो।');showTab('dashboard');return;}
+ const start=$('planStart').value||today(),days=Number($('planDays').value),exam=state.profile.examDate;
+ if(start>exam){alert('प्लान शुरू होने की तारीख परीक्षा की तारीख के बाद है।');return;}
+ const maxDays=Math.min(days,Math.max(1,dayDiff(exam,start)+1));
+ const available=Math.max(30,Number(state.profile.hours||4)*60),block=Number(state.profile.block||40);
+ const pool=state.topics.filter(t=>t.status!=='done').sort((a,b)=>{
+   const rank={weak:0,progress:1,not:2,done:3};
+   return (rank[a.status]??2)-(rank[b.status]??2);
+ });
+ if(!pool.length){alert('Timetable बनाने के लिए कम-से-कम एक अधूरा topic जोड़ो।');return;}
+ state.timetable=[];let cursor=0;
+ // हर दिन topic को केवल एक बार रखो; subjects को भी बारी-बारी से चुनो।
+ for(let day=0;day<maxDays;day++){
+   const date=plusDays(start,day);let used=0,guard=0;const usedToday=new Set();const subjectCount={};
+   while(used<available && guard<pool.length){
+     let candidates=[];
+     for(let step=0;step<pool.length;step++){
+       const topic=pool[(cursor+step)%pool.length];
+       if(!usedToday.has(topic.id)) candidates.push({topic,step});
+     }
+     if(!candidates.length) break;
+     candidates.sort((a,b)=>{
+       const ac=subjectCount[a.topic.subject]||0,bc=subjectCount[b.topic.subject]||0;
+       if(ac!==bc)return ac-bc;
+       const rank={weak:0,progress:1,not:2};
+       return (rank[a.topic.status]??2)-(rank[b.topic.status]??2);
+     });
+     const chosen=candidates[0].topic;
+     const minutes=Math.min(block,Math.max(15,Number(chosen.minutes)||block),available-used);
+     if(minutes<15)break;
+     state.timetable.push({id:uid(),topicId:chosen.id,title:(chosen.status==='weak'?'Revision: ':'Study: ')+chosen.title,subject:chosen.subject,date,minutes,done:false});
+     usedToday.add(chosen.id);subjectCount[chosen.subject]=(subjectCount[chosen.subject]||0)+1;
+     cursor=(pool.findIndex(x=>x.id===chosen.id)+1)%pool.length;
+     used+=minutes;guard++;
+   }
+   // अगर सभी topics एक बार आ चुके हों और दिन में समय बचा हो, उसे खाली रखें।
+   // ऐप उपयोगकर्ता को अधिक tasks जोड़ने/अगले प्लान में topics शामिल करने देता है।
+ }
+ state.timetableStart=start;state.timetableDays=maxDays;save();render();renderTimetable();
+}
+
+$('profileForm').addEventListener('submit',e=>{e.preventDefault();state.profile.goal=$('goal').value.trim();state.profile.examDate=$('examDate').value;state.profile.hours=Number($('hours').value);state.profile.block=Number($('blockMins').value);save();render();alert('लक्ष्य सेव हो गया।');});
+$('addSubject').addEventListener('click',()=>{const s=$('newSubject').value.trim();if(!s)return;if(state.profile.subjects.some(x=>x.toLowerCase()===s.toLowerCase())){alert('यह विषय पहले से मौजूद है।');return;}state.profile.subjects.push(s);$('newSubject').value='';save();render();});
+$('topicForm').addEventListener('submit',e=>{e.preventDefault();const subject=$('topicSubject').value;if(!subject){alert('पहले विषय जोड़ें।');return;}const chapter=$('chapterName').value.trim(),title=$('topicName').value.trim();const status=$('topicStatus').value;const t={id:uid(),subject,chapter,title,status,minutes:Number($('topicDuration').value),completedAt:'',nextRevision:'',revisionCount:0};if(status==='done'){t.completedAt=today();t.nextRevision=plusDays(today(),1);}state.topics.push(t);$('topicName').value='';save();render();});
+$('filterSubject').addEventListener('change',renderTopics);$('filterStatus').addEventListener('change',renderTopics);$('topicSearch').addEventListener('input',renderTopics);
+$('generateTimetable').addEventListener('click',generateTimetable);$('rebuildTimetable').addEventListener('click',()=>{if(confirm('पुराना timetable बदलकर अधूरे topics से नया बनाना है?'))generateTimetable();});
+$('taskForm').addEventListener('submit',e=>{e.preventDefault();const title=$('taskTitle').value.trim();if(!title)return;state.tasks.push({id:uid(),title,subject:$('taskSubject').value||'General',date:$('taskDate').value||today(),minutes:Number($('taskMinutes').value),done:false});$('taskTitle').value='';save();render();});
+$('taskFilter').addEventListener('change',renderTasks);$('taskSort').addEventListener('change',renderTasks);
+$('rescheduleOverdue').addEventListener('click',()=>{const old=state.tasks.filter(t=>!t.done&&t.date<today());if(!old.length){alert('कोई पुराना अधूरा task नहीं है।');return;}old.forEach(t=>t.date=plusDays(today(),1));save();render();alert(`${old.length} tasks कल पर भेज दिए गए।`);});
+$('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='student-progress-tracker-backup.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);$('exportMsg').textContent='Backup export शुरू हो गया। डाउनलोड की गई फ़ाइल सुरक्षित रखो।';});
+$('importBtn').addEventListener('click',async()=>{const f=$('importFile').files[0];if(!f){alert('पहले JSON backup फ़ाइल चुनो।');return;}try{const parsed=JSON.parse(await f.text());if(!parsed.profile||!Array.isArray(parsed.topics)||!Array.isArray(parsed.tasks)){throw new Error('Invalid shape');}if(!confirm('Import करने से वर्तमान डेटा बदल जाएगा। जारी रखें?'))return;state={...fresh(),...parsed,version:5,profile:{...fresh().profile,...parsed.profile},topics:parsed.topics,tasks:parsed.tasks,timetable:Array.isArray(parsed.timetable)?parsed.timetable:[],revisionLog:Array.isArray(parsed.revisionLog)?parsed.revisionLog:[]};save();fillProfile();render();alert('Backup restore हो गया।');}catch(e){alert('यह सही Student Progress Tracker JSON backup नहीं है। डेटा नहीं बदला गया।');}});
+$('resetBtn').addEventListener('click',()=>{if(confirm('पूरा Student Progress Tracker डेटा मिटाकर demo reset करें? पहले backup बना लो।')){localStorage.removeItem(KEY);state=fresh();fillProfile();$('planStart').value=today();$('taskDate').value=today();render();alert('v4 demo reset हो गया।');}});
+function fillProfile(){$('goal').value=state.profile.goal||'';$('examDate').value=state.profile.examDate||'';$('hours').value=state.profile.hours||4;$('blockMins').value=String(state.profile.block||40);}
+function render(){renderSubjectLists();renderDashboard();renderTopics();renderAnalytics();renderTasks();renderTimetable();}
+load();fillProfile();$('planStart').value=state.timetableStart||today();$('taskDate').value=today();render();
+})();
+</script>
+</body>
+</html>
